@@ -31,26 +31,18 @@ export default function AlbumCard({ album }: AlbumCardProps) {
   }, [album.cover_image_id, album.cover_image_path]);
 
   return (
-    <div className="album-card">
-      <div className="album-cover">
-        {loading ? (
-          <div className="cover-image-placeholder">Loading...</div>
-        ) : (
-          <img 
-            src={imageUrl} 
-            alt={`${album.name} album cover`}
-            className="cover-image"
-          />
-        )}
-      </div>
-      <div className="album-info">
-        <h3 className="album-title">{album.name}</h3>
-        <div className="album-details">
-          <p className="album-year">{album.year_released}</p>
-          <p className="album-tracks">{album.tracks} tracks</p>
-          <p className="album-length">{album.length}</p>
+    <div className="text-center">
+      {loading ? (
+        <div className="w-64 h-64 flex items-center justify-center bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 text-gray-500">
+          Loading...
         </div>
-      </div>
+      ) : (
+        <img 
+          src={imageUrl} 
+          alt="Album cover"
+          className="w-64 h-64 object-cover rounded-lg shadow-lg transition-transform hover:scale-105"
+        />
+      )}
     </div>
   );
 }
