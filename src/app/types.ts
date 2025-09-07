@@ -12,3 +12,8 @@ length: string;
 cover_image_path: string;
 cover_image_id: number;
 }
+
+export type User = {
+  name: string;
+  email: string;
+}
