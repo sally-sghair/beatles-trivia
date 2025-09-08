@@ -16,12 +16,14 @@ export default function Trivia({ data, user, onReset }: TriviaProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [wrongAttempts, setWrongAttempts] = useState<string[]>([]);
+  const [roundsPlayed, setRoundsPlayed] = useState(0);
+  const [totalGuesses, setTotalGuesses] = useState(0);
 
   const generateChoices = (correctAlbum: Album) => {
     
     const otherAlbums = data.albums.filter(album => album.name !== correctAlbum.name);
     
-    const getRandomItem = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
+    const getRandomItem = (arr: Album[]) => arr[Math.floor(Math.random() * arr.length)];
     
     const first = getRandomItem(otherAlbums);
     const remaining = otherAlbums.filter(album => album !== first);
@@ -46,6 +48,7 @@ export default function Trivia({ data, user, onReset }: TriviaProps) {
 
   const handleAnswerSelect = (answer: string) => {
     setSelectedAnswer(answer);
+    setTotalGuesses(totalGuesses + 1);
     if (answer === randomAlbum.name) {
       setShowResult(true);
     } else {
@@ -57,6 +60,7 @@ export default function Trivia({ data, user, onReset }: TriviaProps) {
   };
 
   const getNextQuestion = () => {
+    setRoundsPlayed(roundsPlayed + 1);
     const randomIndex = Math.floor(Math.random() * data.albums.length);
     const newAlbum = data.albums[randomIndex];
     setRandomAlbum(newAlbum);
@@ -66,29 +70,33 @@ export default function Trivia({ data, user, onReset }: TriviaProps) {
     setWrongAttempts([]);
   };
 
-  const tryAgain = () => {
-    setSelectedAnswer(null);
-    setWrongAttempts([]);
+  const handleReset = () => {
+    setRoundsPlayed(0);
+    setTotalGuesses(0);
+    onReset();
   };
 
   return (
     <>
       <header className="header">
-        <h1 className="main-title">Beatles Trivia</h1>
+        <h1 className="main-title">Beatles Trivia: Yellow Submarine Edition</h1>
         <p className="artist-info"><b>Artist:</b> {data.artist}</p>
-        <p className="user-info">
-          Welcome {user.name} ({user.email}) ·{' '}
+        <p className="text-xl font-bold">
+        Sgt. Pepper salutes {user.name} | Rounds: {roundsPlayed} | Total Guesses: {totalGuesses}
+        </p>
+        <div className="mt-2 flex items-center justify-center gap-2">
+          <p>I really don&apos;t want to stop the show, but I thought you might like to</p>
           <button 
             className="bg-transparent border-none cursor-pointer p-0 underline text-gray-600 hover:text-gray-800 transition-colors duration-200" 
-            onClick={onReset}
+            onClick={handleReset}
           >
-            Change user
+            Change player
           </button>
-        </p>
+        </div>
       </header>
 
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">Name the album:</h2>
+          <h2 className="text-3xl font-bold mb-8 text-gray-800">Help! What’s the album?</h2>
           <div className="flex justify-center mb-8">
             <AlbumCard album={randomAlbum} />
           </div>
@@ -107,12 +115,12 @@ export default function Trivia({ data, user, onReset }: TriviaProps) {
                   disabled={isDisabled}
                   className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
                     showResult && isCorrect
-                      ? 'bg-green-500 text-white'
+                      ? 'guess-button-correct'
                       : isSelected && !isCorrect
-                      ? 'bg-red-500 text-white'
+                      ? 'guess-button-incorrect'
                       : isWrongAttempt
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-blue-100 hover:bg-blue-200 text-blue-800 border-2 border-blue-300 hover:border-blue-400'
+                      ? 'guess-button-disabled'
+                      : 'guess-button'
                   }`}
                 >
                   {choice}

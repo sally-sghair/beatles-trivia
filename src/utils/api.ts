@@ -1,4 +1,4 @@
-import type { AlbumResponse, Album } from '@/app/types';
+import type { AlbumResponse } from '@/app/types';
 
 
 export default async function getAlbums(): Promise<AlbumResponse> {
@@ -18,54 +18,11 @@ export default async function getAlbums(): Promise<AlbumResponse> {
     } else {
       throw new Error(`Failed to fetch albums: ${res.status} ${res.statusText}`);
     }
-  } catch (e) {
+  } catch {
     throw new Error('Failed to fetch albums');
   }
 }
 
-export async function getAlbumCover(id: number): Promise<Album> {
-  const baseApiUrl = process.env.API_BASE_URL;
-  if (!baseApiUrl) {
-    throw new Error('API_BASE_URL environment variable is not defined');
-  }
-  
-  const res = await fetch(baseApiUrl, {
-    headers: { Accept: "application/json" },
-  });
-  
-  if (res.ok) {
-    const data = (await res.json()) as AlbumResponse;
-    const album = data.albums.find(a => a.cover_image_id === id);
-    if (!album) {
-      throw new Error(`Album with id ${id} not found`);
-    }
-    return album;
-  } else {
-    throw new Error(`Failed to fetch album cover: ${res.status} ${res.statusText}`);
-  }
-}
-
-export async function getAlbumCoverClient(id: number): Promise<Album> {
-  const baseApiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!baseApiUrl) {
-    throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is not defined');
-  }
-  
-  const res = await fetch(baseApiUrl, {
-    headers: { Accept: "application/json" },
-  });
-  
-  if (res.ok) {
-    const data = (await res.json()) as AlbumResponse;
-    const album = data.albums.find(a => a.cover_image_id === id);
-    if (!album) {
-      throw new Error(`Album with id ${id} not found`);
-    }
-    return album;
-  } else {
-    throw new Error(`Failed to fetch album cover: ${res.status} ${res.statusText}`);
-  }
-}
 
 export function getAlbumCoverUrl(path: string): string {
   const base =
